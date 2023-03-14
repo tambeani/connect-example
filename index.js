@@ -1,6 +1,9 @@
 const connect = require('connect');
 const app = connect();
 const env = process.env.NODE_ENV || 'development';
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+
 /*
     use() - used for combining the middleware 
     components. 
@@ -40,8 +43,9 @@ function logger(format){
 }
 
 // hello middeware component - ends the request, hence doesn't need next
-function hello(res,res){
+function hello(req,res){
     res.setHeader('Content-Type','text/plain');
+    if(req.body.pass == 0) throw new Error();
     res.end("Hello World!");
 }
 
@@ -51,7 +55,7 @@ function errorHandler(err,req,res,next){
         case 'development':
             console.error('Error:');
             console.error(err);
-            res.setHeader('Content-Type');
+            res.setHeader('Content-Type','application/json');
             res.end(JSON.stringify(err));
             break;
         default:
